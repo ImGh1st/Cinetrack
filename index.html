@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101114">
+  <meta name="description" content="A private, local-first movie and TV watchlist.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>CineTrack — Your screen, your story</title>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" data-view="home" aria-label="CineTrack home">
+        <span class="brand-mark">C</span><span>Cine<span class="brand-light">Track</span><small>YOUR SCREEN, YOUR STORY</small></span>
+      </a>
+      <button class="nav-item active" data-view="home"><span>⌂</span> Overview</button>
+      <button class="nav-item" data-view="library"><span>▤</span> My library</button>
+      <button class="nav-item" data-view="movies"><span>▣</span> Movies</button>
+      <button class="nav-item" data-view="series"><span>▥</span> TV series</button>
+      <button class="nav-item" data-view="collections"><span>▦</span> Collections</button>
+      <button class="nav-item" data-view="discover"><span>✦</span> Discover</button>
+      <button class="nav-item" data-view="stats"><span>◷</span> Statistics</button>
+      <div class="sidebar-bottom">
+        <div class="local-badge"><span class="status-dot"></span><span><b>Private library</b><small>Stored on this device</small></span></div>
+        <button class="nav-item" data-view="settings"><span>⚙</span> Settings & backup</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-btn mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button>
+        <div class="breadcrumbs"><span class="crumb-muted">CINETRACK</span><span class="crumb-sep">/</span><strong id="pageTitle">Overview</strong></div>
+        <div class="top-actions">
+          <label class="global-search"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search your library…" autocomplete="off"></label>
+          <button class="btn btn-primary" id="addMediaBtn"><span>＋</span> Add title</button>
+        </div>
+      </header>
+      <div id="appContent" class="content" tabindex="-1"></div>
+      <footer class="footer"><span>© CineTrack</span><span><i class="status-dot"></i> Local-first · No account required</span></footer>
+    </main>
+  </div>
+
+  <dialog id="mediaDialog" class="modal">
+    <form id="mediaForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow" id="formEyebrow">YOUR LIBRARY</p><h2 id="mediaDialogTitle">Add a title</h2></div><button type="button" class="icon-btn" data-close="mediaDialog" aria-label="Close">✕</button></div>
+      <input type="hidden" id="mediaId">
+      <div class="form-grid">
+        <label class="field full"><span>Title *</span><input id="titleInput" required maxlength="200" placeholder="e.g. The Dark Knight"></label>
+        <label class="field"><span>Type</span><select id="typeInput"><option value="movie">Movie</option><option value="series">TV series</option></select></label>
+        <label class="field"><span>Release year</span><input id="yearInput" type="number" min="1888" max="2200" placeholder="2008"></label>
+        <label class="field"><span>IMDb rating / 10</span><input id="imdbInput" type="number" min="0" max="10" step="0.1" placeholder="7.0"></label>
+        <label class="field"><span>Rotten Tomatoes critics %</span><input id="rtCriticsInput" type="number" min="0" max="100" step="1" placeholder="—"></label>
+        <label class="field"><span>Rotten Tomatoes audience %</span><input id="rtAudienceInput" type="number" min="0" max="100" step="1" placeholder="—"></label>
+        <label class="field"><span>Metacritic / 100</span><input id="metaInput" type="number" min="0" max="100" step="1" placeholder="—"></label>
+        <label class="field"><span>Your rating / 10</span><input id="personalInput" type="number" min="0" max="10" step="0.5" placeholder="—"></label>
+        <label class="field"><span>Status</span><select id="statusInput"><option value="planned">Want to watch</option><option value="watching">Watching</option><option value="watched">Watched</option><option value="on_hold">On hold</option><option value="dropped">Dropped</option></select></label>
+        <label class="field"><span>Genres</span><input id="genresInput" placeholder="Action, Drama (comma-separated)"></label>
+        <label class="field full"><span>Poster image URL (optional)</span><input id="posterInput" type="url" placeholder="https://…"></label>
+        <label class="field full"><span>IMDb ID (optional, helps avoid duplicates)</span><input id="imdbIdInput" placeholder="tt0468569"></label>
+        <label class="field full"><span>Personal notes</span><textarea id="notesInput" rows="3" placeholder="What do you want to remember?"></textarea></label>
+      </div>
+      <div class="form-foot"><button type="button" class="btn btn-quiet" data-close="mediaDialog">Cancel</button><button class="btn btn-primary" type="submit">Save title</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="collectionDialog" class="modal modal-small">
+    <form id="collectionForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">ORGANIZE YOUR LIBRARY</p><h2 id="collectionDialogTitle">New collection</h2></div><button type="button" class="icon-btn" data-close="collectionDialog" aria-label="Close">✕</button></div>
+      <input type="hidden" id="collectionId">
+      <label class="field"><span>Collection name *</span><input id="collectionName" required maxlength="80" placeholder="e.g. Christopher Nolan"></label>
+      <label class="field"><span>Description</span><textarea id="collectionDescription" rows="3" placeholder="What's this collection about?"></textarea></label>
+      <div class="form-foot"><button type="button" class="btn btn-quiet" data-close="collectionDialog">Cancel</button><button class="btn btn-primary" type="submit">Save collection</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="membershipDialog" class="modal modal-small">
+    <form id="membershipForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">COLLECTIONS</p><h2>Add to collections</h2><p class="muted" id="membershipTitle"></p></div><button type="button" class="icon-btn" data-close="membershipDialog" aria-label="Close">✕</button></div>
+      <input type="hidden" id="membershipMediaId">
+      <div id="membershipChoices" class="check-list"></div>
+      <div class="form-foot"><button type="button" class="btn btn-quiet" data-close="membershipDialog">Cancel</button><button class="btn btn-primary" type="submit">Save memberships</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="episodeDialog" class="modal modal-small">
+    <form id="episodeForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">SERIES PROGRESS</p><h2 id="episodeTitle">Episode tracker</h2></div><button type="button" class="icon-btn" data-close="episodeDialog" aria-label="Close">✕</button></div>
+      <input type="hidden" id="episodeMediaId">
+      <p class="muted">Add a season and episode count to create a lightweight checklist. Episode names can be filled in later.</p>
+      <div class="form-grid">
+        <label class="field"><span>Season number</span><input id="seasonNumber" type="number" min="0" value="1" required></label>
+        <label class="field"><span>Episodes in season</span><input id="episodeCount" type="number" min="1" max="100" value="10" required></label>
+      </div>
+      <div id="episodeList" class="episode-list"></div>
+      <div class="form-foot"><button type="button" class="btn btn-quiet" data-close="episodeDialog">Close</button><button type="button" class="btn btn-primary" id="addSeasonBtn">Add season</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
